@@ -2,6 +2,8 @@
 
 class PostsController < ApplicationController
   before_action :set_post, only: %i[show edit update destroy]
+  before_action :authenticate_user!, except: [:index, :show]
+  before_action :is_admin!, except: [:index, :show]
 
   # GET /posts
   # GET /posts.json
@@ -11,7 +13,10 @@ class PostsController < ApplicationController
 
   # GET /posts/1
   # GET /posts/1.json
-  def show; end
+  def show
+    views = @post.views + 1
+    @post.update(views: views)
+  end
 
   # GET /posts/new
   def new
@@ -25,7 +30,7 @@ class PostsController < ApplicationController
   # POST /posts.json
   def create
     @post = Post.new(post_params)
-
+    @post.user = current_user
     respond_to do |format|
       if @post.save
         format.html { redirect_to @post, notice: 'Post was successfully created.' }
@@ -70,6 +75,6 @@ class PostsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def post_params
-    params.require(:post).permit(:title, :views, :user_id)
+    params.require(:post).permit(:title, :body, :thumbnail, :banner)
   end
 end

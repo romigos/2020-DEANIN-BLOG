@@ -19,3 +19,6 @@ import 'bootstrap'
 import './src/application.scss'
 
 globsl.$ - jQuery;
+
+require("trix")
+require("@rails/actiontext")
